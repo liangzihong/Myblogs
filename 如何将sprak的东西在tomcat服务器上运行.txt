@@ -1,0 +1,51 @@
+1、按照几个网站，将maven项目以web的形式在idea上运行
+具体看几个博客：https://www.cnblogs.com/zhangyinhua/p/7768163.html
+再加上在idea 布置servlet的一些操作（查看博客）
+
+2、然后再看官网
+
+	To run Spark on another web server (instead of the embedded jetty server), an implementation of the interface spark.servlet.SparkApplication is needed. You have to initialize your routes in the init() method, and the following filter might have to be configured in your web.xml:
+
+<filter>
+    <filter-name>SparkFilter</filter-name>
+    <filter-class>spark.servlet.SparkFilter</filter-class>
+    <init-param>
+        <param-name>applicationClass</param-name>
+        <param-value>com.company.YourApplication</param-value>  <!--你的类名-->
+    </init-param>
+</filter>
+<filter-mapping>
+    <filter-name>SparkFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+</filter-mapping>
+
+
+3、再看到stack overflow 里面的同样一个问题，然后来到github
+https://github.com/paulkav1/spark_tomcat_example
+然后问题就解决了。
+
+
+
+import static spark.Spark.*;
+import spark.servlet.SparkApplication;
+import java.util.HashMap;
+import java.util.Map;
+import spark.ModelAndView;
+import spark.template.freemarker.FreeMarkerEngine;
+
+public class Hello implements SparkApplication{
+
+    public void init() {
+        get("/hello", (request, response) -> {
+        	return "Hello World!";          
+    	}); 
+
+        get("/free", (request, response) -> {
+    		Map<String, Object> model = new HashMap<String, Object>();  
+            model.put("msg", "Here is a message");              
+            return new ModelAndView(model, "select.ftl");
+            }, new FreeMarkerEngine()); 
+
+    }   
+}
+
