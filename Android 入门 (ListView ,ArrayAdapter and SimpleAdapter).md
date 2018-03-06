@@ -1,3 +1,138 @@
+## 自定义的适配器
+
+当你使用  ListView时，你要用到适配器，通常简单的ArrayAdapter<String> 太简单就用不上，此时可能会有 SimpleAdapter，但是SimpleAdapter面对一个项目来说就  显得 比较混乱了。 要想使  Fragment 和 Activity瘦身，就要用到自定义 的  Adapter了。
+
+
+
+首先我们要先按需求定义一个  POJO类。
+
+```java
+public class Group {
+    private String GroupName;
+    private int ProfilePhoto;
+    private String LastRecord;
+
+    public Group(String groupName,int profilePhoto,String lastRecord){
+        GroupName=groupName;
+        ProfilePhoto=profilePhoto;
+        LastRecord=lastRecord;
+    }
+
+    public String getGroupName(){return GroupName;}
+    public int getProfilePhoto(){return ProfilePhoto;}
+    public String getLastRecord(){return LastRecord;}
+}
+```
+
+这个 Group类有头像，群名和最后一条记录，图片类的 拿 图片的int来代替。
+
+
+
+然后我们需要定义  GroupAdapter类。
+
+```java
+public class GroupAdapter extends ArrayAdapter<Group> {
+
+    private int resourceId;
+
+
+    public GroupAdapter(Context context, int textViewResourceId, List<Group> list) {
+        super(context, textViewResourceId, list);
+        resourceId=textViewResourceId;
+    }
+
+
+    @Override
+    public View getView(int position,  View convertView,  ViewGroup parent) {
+
+        Group group=getItem(position);
+        View view=LayoutInflater.from(getContext()).inflate(resourceId,parent,false);
+        ImageView profilephoto=(ImageView)view.findViewById(R.id.image);
+        TextView lastrecord=(TextView)view.findViewById(R.id.LastRecord);
+        TextView name=(TextView)view.findViewById(R.id.Name);       
+       
+        view.profilephoto.setImageResource(group.getProfilePhoto());
+        view.name.setText(group.getGroupName());
+        view.lastrecord.setText(group.getLastRecord());
+        return view;
+    }
+}
+```
+
+上面很多东西都是固定的，如  构造函数就要记住，  而getView ，如何获得 view也要记住，如何获得Group对象，也要记住，然后就比较简单了。
+
+
+
+但是这样 ListView的效率很低，因为每拖动一次屏幕，就要重新加载新出现的 view，所以可能会不断重复出现。
+
+为了更加优化，可以用这样的方法。
+
+```java
+public class GroupAdapter extends ArrayAdapter<Group> {
+
+    private int resourceId;
+
+    ........
+
+    @Override
+    public View getView(int position,  View convertView,  ViewGroup parent) {
+
+        Group group=getItem(position);
+        ViewHolder viewHolder;
+        View view;
+        if(convertView==null){
+            view= LayoutInflater.from(getContext()).inflate(resourceId,parent,false);
+            viewHolder=new ViewHolder();
+            viewHolder.profilephoto=(ImageView)view.findViewById(R.id.image);
+            viewHolder.lastrecord=(TextView)view.findViewById(R.id.LastRecord);
+            viewHolder.name=(TextView)view.findViewById(R.id.Name);
+            view.setTag(viewHolder);
+        }
+        else{
+            view=convertView;
+            viewHolder=(ViewHolder) view.getTag();
+        }
+
+        viewHolder.profilephoto.setImageResource(group.getProfilePhoto());
+        viewHolder.name.setText(group.getGroupName());
+        viewHolder.lastrecord.setText(group.getLastRecord());
+        return view;
+    }
+
+    class ViewHolder
+    {
+        ImageView profilephoto;
+        TextView name;
+        TextView lastrecord;
+    }
+
+}
+```
+
+converView相当于缓存，如果converView不为空，可以直接拿出来当成view。
+
+而viewHolder则存储  UI控件。
+
+而如果converView为空，则创建view和viewHolder，将viewHolder的控件赋值，然后 将viewHolder存储在view中。
+
+而两种情况最后都要对  viewHolder的控件 赋上资源。
+
+
+
+
+
+###最后，我再用MVP对 ListView赋上adapter。
+
+
+
+
+
+
+
+
+
+
+
 ## ListView的简单使用
 
 1. 摆出一个ListView
@@ -116,7 +251,7 @@ listview.setOnScrollListener(new AbsListView.OnScrollListener() {
 public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {}
        });
 ```
-   		
+
 
 6. 如果途中，simpleAdapter的数据源有变，则要调用   notifyDataSetChanged()方法来更新，不然会崩毁。
 
