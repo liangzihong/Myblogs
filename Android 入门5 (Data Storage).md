@@ -164,6 +164,8 @@ cursor相当于一个查询得到的结果，它包含查询到的行。
         values.put("age",100);
         database.update(TABLENAME,values,"sex='male' ",null);
 
+        //database.delete()删除功能
+        database.delete(TABLENAME,"sex=?",new String[]{"male"});
 
 
         //database.query()  查询功能
@@ -189,6 +191,16 @@ ContentValues相当于一个  HashMap
 
 * 把列名 和对应的数据放入 values中
 * 然后 database对values进行增删改查的操作即可。
+
+
+
+
+####同样，也可以用  SQLOpenHelper
+
+不过都差不多，大同小异，没什么差别。 
+
+因为最好都是用  开源的  ORM框架， LitePal。
+
 
 
 
@@ -270,6 +282,54 @@ ContentValues相当于一个  HashMap
 
 
 
+
+而如果你想把字符串真正地写在文件上，可以用到   BufferedWriter和BufferedReader
+
+写文件
+
+```java
+    private void writeFiles(String content) throws Exception{
+	    try{
+        BufferedWriter writer;
+        //openFileOutput(文件名，模式)直接返回输入流。  直接fop.write(string.getBytes())
+        FileOutputStream outputStream=openFileOutput("store.txt",MODE_PRIVATE);
+        writer=new BufferedWriter(new OutputStreamWriter(outputStream));
+        writer.write(content);}
+        catch(Exception e){
+            e.printStackTrdlfadfjxxx();
+        }
+        outputStream.close();
+        writer.close();
+    }
+```
+
+BufferedWriter writer=new BufferedWriter(new OutputStreamWriter(outputStream));
+
+writer.write(content);
+
+
+
+
+
+读文件
+
+```java
+    private String readFiles() throws Exception {
+
+        //利用到新知识  bytearrayoutputstream，可以直接 toString将字节变成String
+        FileInputStream inputStream=openFileInput("store.txt");
+		BufferedReader Reader;
+         Reader=new BufferedReader(new InputStreamWriter(InputStream));
+		String ret="";
+        String line="";
+        while((line=Reader.readLine())!=null){
+			ret=ret+line;
+        }
+        inputStream.close();
+		reader.close();
+        return ret;
+    }
+```
 
 
 

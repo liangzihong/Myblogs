@@ -160,6 +160,12 @@
 
 
 
+### Fragment和Fragment的沟通
+
+两个Fragment进行沟通，就要通过activity作为桥梁，需要  在 A Fragment中通过  onActivity之类的函数得到activity，然后再 通过  activity的  getSupportFragmentManager的findFragmentbyid找到  B Fragment，然后再进行交流即可。
+
+
+
 
 
 
@@ -443,7 +449,7 @@
    }
 }
 ```
-  
+
 4. Gallery对应的事件响应函数是   setOnSelectedListener(xxxx);
 
 ```java

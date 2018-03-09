@@ -247,7 +247,9 @@ public class LocalBroadcastActivity extends AppCompatActivity {
 
 
 
+### 广播的作用
 
+通过广播，我们可以配合  BaseActivity，在 我不是微信中实现  强制下线的功能。
 
 
 
