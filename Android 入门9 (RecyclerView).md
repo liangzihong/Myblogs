@@ -264,6 +264,8 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
 
 
 
+
+
 ```java
 public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHolder> {
 
@@ -333,8 +335,168 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
 
 这两个函数是最重要的，onBindViewHolder和onCreateViewHolder
 
-onBindViewHolder：根据 position 取得 Model的对象，根据对象的属性，对 参数holder的UI控件赋上响应的属性，如 setText，setImageResource等。
+onBindViewHolder：根据 position 取得 Model的对象，根据对象的属性，对 参数holder的UI控件赋上响应的属性，如 setText，setImageResource，setVisibility等。
 
 
 
 onCreateViewHolder：要根据参数view 返回一个viewHolder，如果要设置事件响应，就在这里响应。可以对view的分个控件进行事件响应，也可对单一的整个view进行响应。
+
+
+
+```java
+public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHolder> {
+
+    /**
+     * 返回数组的大小
+     * @return
+     */
+    @Override
+    public int getItemCount() {
+        return ListOfMessage.size();
+    }
+}
+
+```
+
+当然，还要继承一个返回 model个数的函数。
+
+
+
+
+
+最后，要在主activity中对recyclerView进行初始化，设置 adapter等东西
+
+```java
+public class StartActivity extends AppCompatActivity {
+    private RecyclerView recyclerView;
+    private EditText inputEditText;
+    private Button sentButton;
+    private List<Message> arr;
+    private MessageAdapter adapter;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.chatui_layout);
+        init();
+    }
+
+
+
+    private void init(){
+        recyclerView=(RecyclerView) findViewById(R.id.recyclerView);
+        inputEditText=(EditText)findViewById(R.id.inputEditText);
+        sentButton=(Button)findViewById(R.id.sentButton);
+
+        /**
+         * RecyclerView的前提，需要一个LinerLayoutManager
+         * 然后recyclerView要 setLayoutManager，然后setAdapter
+         */
+        LinearLayoutManager layoutManager=new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(layoutManager);
+        arr=new ArrayList<>();
+        adapter=new MessageAdapter(arr);
+        recyclerView.setAdapter(adapter);
+
+
+        sentButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(inputEditText.getText()==null)
+                    Toast.makeText(StartActivity.this, "消息为空", Toast.LENGTH_SHORT).show();
+                sentMessage(inputEditText.getText()+"");
+            }
+        });
+
+    }
+
+}
+
+
+```
+
+
+
+recyclerView的前提是要一个LinerLayoutManager。
+
+LinearLayoutManager layoutManager=new LinearLayoutManager(this);
+
+然后再setLayoutManager
+
+recyclerView.setLayoutManager(layoutManager);
+
+最后就是把  List<model> 放入 adapter中，然后再setAdapter。
+
+
+
+如果要设置 recyclerView的更新，移动位置等
+
+可以这样  例如这里发送信息，就要刷新信息，并且  把recyclerView拉到最后一行。
+
+```java
+    private void sentMessage(String content){
+        Message msg=new Message(content,Message.Is_Sent);
+        arr.add(msg);
+        Message ret=new Message(content+"是什么\n"+"你在说什么?",Message.Is_Receive);
+        arr.add(ret);
+        //当有新消息时，刷新 recyclerView的显示
+        adapter.notifyItemInserted(arr.size()-1);
+
+        //将recyclerView定位到最后一行。
+        recyclerView.scrollToPosition(arr.size()-1);
+        inputEditText.setText(null);
+
+    }
+```
+
+加入新消息
+
+Message msg=new Message(content,Message.Is_Sent);
+
+arr.add(msg);
+
+
+
+当有新消息时，刷新 recyclerView的显示
+
+adapter.notifyItemInserted(arr.size()-1);
+
+
+
+将recyclerView定位到最后一行
+
+recyclerView.scrollToPosition(arr.size()-1);
+
+
+
+
+
+到此为止，recyclerView已经搞定。
+
+
+
+重点就是适配器的构造。
+
+首先需要一个  viewHolder把item布局中所需要的控件赋值
+
+
+
+再者，onBindViewHolder：根据 position 取得 Model的对象，根据对象的属性，对 参数holder的UI控件赋上响应的属性，如 setText，setImageResource，setVisibility等。
+
+
+
+然后，onCreateViewHolder：要根据参数view 返回一个viewHolder，如果要设置事件响应，就在这里响应。可以对view的分个控件进行事件响应，也可对单一的整个view进行响应。
+
+
+
+最后，返回size。public int getItemCount()。
+
+
+
+然后设置  layoutManager这些就直接看上面就好。
+
+如果要更新和拉到某个位置，可以用adapter.notifyItemInserted(arr.size()-1);
+
+和recyclerView.scrollToPosition(arr.size()-1);
+
+
+
