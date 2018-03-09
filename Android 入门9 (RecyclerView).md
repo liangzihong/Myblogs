@@ -333,3 +333,8 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
 
 这两个函数是最重要的，onBindViewHolder和onCreateViewHolder
 
+onBindViewHolder：根据 position 取得 Model的对象，根据对象的属性，对 参数holder的UI控件赋上响应的属性，如 setText，setImageResource等。
+
+
+
+onCreateViewHolder：要根据参数view 返回一个viewHolder，如果要设置事件响应，就在这里响应。可以对view的分个控件进行事件响应，也可对单一的整个view进行响应。
