@@ -203,6 +203,10 @@ ContentValues相当于一个  HashMap
 
 
 
+关于  SQLiteDatabase可以看  第一行代码的东西，写得比较清晰。
+
+包括  update，insert，delete，query的参数其实都差不多，看书就可以得到了。
+
 
 
 
