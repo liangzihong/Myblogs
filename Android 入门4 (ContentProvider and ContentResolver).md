@@ -21,8 +21,25 @@
 
 #### 什么是URI
 
-1. ContentResolver操作数据时，你要告诉它是搞哪条数据，哪个数据库之类的，URI就是充当路标功能。
-2. URI的获取通常是在ContentProvider的身上获取。  所以现在很明显了， ContentProvider提供URI给ContentResolver用，使其来操作ContentProvider管理的数据。
+1. 真的被我说中了，URI其实就是一个参数，提供给ContentResolver增删改查用的。 内容URI给ContentProvider的数据提供了唯一的标识，所以通过内容URI，就能直接到达表的位置。
+
+2. URI由两部分组成，分别是authority和path
+
+   authority相当于包名，path则相当于表名或者是表里面的某一列的列名
+
+   如果是  com.example.app.provider程序中的一个table1表，则它的URI通常是
+
+   com.example.app.provider/table1
+
+3. 并且，前缀要加上这个URI的类型，也就是内容URI
+
+   content://com.example.app.provider/table1
+
+4. 如果由字符串变成 URI对象，需要   用   URI.parse("content://com.example.app.provider/table1")，这就变成了真正的URI对象。
+
+5. 通常，运用   ContentResolver.query(uri, projection, selection,selectionArgs,sortOrder)；
+
+   得出你想要的数据， 而 uri通常是  contentProvider提供的静态变量。
 
 
 
@@ -59,22 +76,17 @@ requestPermissions(new String[]{Manifest.permission.READ_CONTACTS},0);
 
 
 ```java
-/**
- *要声明的是 联系人的 电话号码  和 名字 是分开两个不同的表
- *首先是获取联系人的 _ID 和它的 DISPLAY_NAME
- 
- * Contact是系统提供的ContentProvider
- */
+//其实没那么难，直接有一个 ContactsContract.CommonDataKinds.Phone这个表
+//按照这个表来就可以很好地搞定。
+
 private void readContacts(){
 	ContentResolver cr=getContentResolver();
-    Uri uri=Contact.CONTENT_URI;   //uri指向联系人数据库的其中一个表，里面有   _ID和display_name
-    
-    //就像SQLite操作，uri指向一个表，然后查询你想要的列
-    Cursor cursor=cr.query(uri,new String[]{Contact._ID,Contact.DISPLAY_NAME},null,null,null)
+    Cursor cursor=contentResolver.query(Phone.CONTENT_URI,null,
+                null,null,null);
     if(cursor！=null){
         while(cursor.moveToNext()){
-            int id=cursor.getInt(cursor.getColumnIndex(Contact._ID));
-            String name=cursor.getString(cursor.getColumnIndex(Contact.DISPLAY_NAME));
+            String name=cursor.getString(cursor.getColumnIndex(Phone.DISPLAY_NAME));
+            String phonenumber=cursor.getString(cursor.getColumnIndex(Phone.NUMBER));
             
             getPhoneNumber(id);
         }    
@@ -85,29 +97,6 @@ private void readContacts(){
 
 
 
-
-```java
-/**
- *要声明的是 联系人的 电话号码  和 名字 是分开两个不同的表
- *获取到id，而id应该是外键，电话号码中也有id。
- *所以只能通过id去找电话号码
- 
- *Phone是系统提供的ContentProvider
- */
-private void getPhoneNumver(int id){
-    ContentResolver cr=getContentResolver();
-    Uri uri=Phone.CONTENT_URI;  //uri指向联系人数据库的 phone表，里面有   _ID和 NUMBER
-    
-    Cursor cursor=cr.query(uri,new String[]{Phone._ID,Phone.NUMBER},
-                          Phone._ID+"="+id,null,null);
-    if(cursor！=null){
-        while(cursor.moveToNext()){
-            String number=cursor.getString(cursor.getColumnIndex(Phone.NUMBER));
-        }    
-	}
-}
-
-```
 
 
 
@@ -180,4 +169,15 @@ private void addContacts() {
 用到的系统的ContentProvider有三个   RawContacts，Phone，StructuredName
 
 * RawContacts.CONTENT_URI估计是新联系人的表
+
+
+
+
+
+
+###如何创建自己应用的 ContentProvider
+
+因为目前用不到，所以暂时就不浪费时间做笔记和写下来，具体在  第一行代码 的 265页。
+
+
 
