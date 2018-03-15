@@ -1,3 +1,73 @@
+## Handler
+
+* Handler是一个处理者，这是异步消息处理机制的重要一环，它通常负责 发送信息 和 处理信息。
+
+  通常是  在 子线程中  发送信息，   然后会经过一系列的机制  到达  主线程中的 处理信息的函数
+
+  此时就可以更新UI了
+
+* 这是手办眼见功夫，就不打了。
+
+* 具体在 第一行代码 的  p343-p344
+
+
+
+* 同样重要的 还有  Message，what字段可以携带信息，arg1和arg2可以携带整型数据，obj可以携带 object数据。
+* MessageQueue and Looper 
+* 之前用的  runOnUiThread就是一个异步消息处理机制的封装函数。
+
+
+
+
+
+## AsyncTask
+
+* AsyncTask就是android将异步消息处理机制 封装一下而已
+
+* 它是抽象类，有几个抽象方法
+
+* onPreExecute()    主线程方法，用于 进行耗时操作前的准备
+
+  doInBackground(Params..)	   子线程方法，在这里进行耗时操作
+
+  onProgressUpdate(Progress)	主线程方法，可以进行UI操作， 需要调用publishProgress（）来调用
+
+  onPostExecute(Result)	执行一些任务的收尾工作。
+
+* 第一行代码的 p348-p349
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ## Service
 
 
@@ -223,3 +293,76 @@ public class MainActivity extends AppCompatActivity {
 
 
 而在onServiceConnected中，第二个参数 就是  服务返回的  IBinder接口，于是我们用一个  Mybinder 向下转型，通过 getService()获取到了  MyBindService本身。  于是通过这个  MyBindService ，就可以轻松获取服务，调用服务的函数了。
+
+
+
+
+
+
+
+
+
+## IntentService
+
+* 比如你需要一个后台服务去 下载一个东西，那么你要一些比较麻烦的操作
+
+  因为服务默认是在子线程中运行的，再者，服务一旦开启之后，如果要停下，就要调用  stopSelf()函数，那你是不是觉得很麻烦。
+
+* 所以android弄了一个 IntentService类
+
+* 目的就是要可以  简单地创建一个 异步的，会自动停止的服务。
+
+  其实就是在封装了一个    在内部开启一个新线程的 service
+
+
+
+* 需要继承  IntentService这个类，然后实现  onHandleIntent这个方法，这个方法就是要执行的耗时操作，是在子线程中运行的，并且它是直接运行完  后自动关闭的。
+
+* 其他 Intent intentService=new Intent(this,MyIntentService.class);
+
+  ​         startService(intentService);   是一样的
+
+* 并且是要在配置文件中声明的。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
