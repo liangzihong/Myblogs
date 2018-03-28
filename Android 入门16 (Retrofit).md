@@ -2,6 +2,8 @@
 
 因为第一次使用，还没有什么经验，就把别人的博客放下来，加上自己的一点解释。
 
+
+
 ## Retrofit 是什么？
 
 Retrofit is a type-safe HTTP client for Android and java.
@@ -12,6 +14,10 @@ Retrofit is a type-safe HTTP client for Android and java.
 
 关于 Retrofit 的原理，有三个十分重要的概念：『注解』，『动态代理』，『反射』。将会在以后逐步进行分析。
 
+
+
+
+
 ## 初步使用 Retrofit
 
 Retrofit 在使用上与其他网络开源库有些区别，初次使用可能会感到困惑，其使用主要有四个步骤。
@@ -19,6 +25,10 @@ Retrofit 在使用上与其他网络开源库有些区别，初次使用可能�
 在使用前，我们首先假设我们要从某个 API 接口来获取数据，这里我们使用一位博主所提供的接口。接口的 URL 地址如下：
 
 > [https://api.github.com/users/Guolei1130](https://link.jianshu.com?t=https://api.github.com/users/Guolei1130)
+
+
+
+
 
 ### 添加依赖和权限
 
@@ -37,6 +47,10 @@ compile 'com.squareup.retrofit2:converter-gson:2.4.0'
 ```
 
 在 Retrofit 2.0 中，如果要将 JSON 数据转化为 Java 实体类对象，需要自己显式指定一个 Gson Converter。
+
+
+
+
 
 ### 定义接口
 
@@ -68,6 +82,10 @@ Call<TestModel> 是一个请求对象，<TestModel>表示返回结果是一个 T
 * baseUrl是主机名，并不在接口中出现
 * 我们使用get注解时，如果固定的字符串就直接打上去，如果是 值不同的，就用{param1}括起来，然后在参数中加上 @Path("param1") String xxx，就表示会用xxx的值代替{param1} 成为url的一部分，就像使用 渲染模板 HandleBars一样。
 * 然后 Call<T>是固定要返回的东西，Call是一个相当于 发送请求的东西。
+
+
+
+
 
 
 
@@ -161,3 +179,5 @@ model.enqueue(new Callback<TestModel>() {
 ### 更多更难的操作
 
 除了get方法，当然还有  Post，Delete，Put方法，并且还有 ？对应Query，多个就对应 QueryMap，这些更难的操作就遇到时再补充。
+
+详细可以看这个 网站：https://www.jianshu.com/p/7687365aa946
