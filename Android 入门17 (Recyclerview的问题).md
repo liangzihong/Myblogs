@@ -92,7 +92,7 @@
 
    这是有诀窍的，这个google即可。
 
-5. SwipeRefreshLayout里面包有  Recyclerview时
+5. **当你需要 toolbar随着你的swipeRefreshLayout或者 scrollview的移动而缩放，就要添加** 
 
    在 swipeRefreshLayout 设置一个属性   app:layout_behavior="@string/appbar_scrolling_view_behavior"
 
